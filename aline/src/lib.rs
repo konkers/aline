@@ -1,10 +1,14 @@
-#![no_std]
+#![cfg_attr(not(feature = "std"), no_std)]
+#![feature(async_fn_in_trait)]
 
 use core::str::FromStr;
 
 use num_traits::Num;
 
 pub use aline_macro::CommandParser;
+
+mod command;
+mod dyner;
 
 #[derive(Debug, PartialEq)]
 pub enum Error {
@@ -15,16 +19,11 @@ pub enum Error {
     IntegerParseError,
 }
 
-type Result<T> = core::result::Result<T, Error>;
+pub type Result<T> = core::result::Result<T, Error>;
 
 pub trait CommandParser {
     fn name(&self) -> &str;
     fn parse(&mut self, args: &[&str]) -> Result<()>;
-}
-
-pub trait CommandExecutor {
-    // TODO: add output context.
-    fn execute(&self) -> Result<()>;
 }
 
 pub mod internal {
